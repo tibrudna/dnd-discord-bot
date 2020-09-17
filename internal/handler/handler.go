@@ -20,15 +20,19 @@ func MessageCreate(session *discordgo.Session, message *discordgo.MessageCreate)
 	}
 
 	command := strings.Split(message.Content, " ")[1]
-	function, ok := function.Functions[command]
+	action, ok := function.Functions[command]
 
 	if !ok {
-		session.ChannelMessageSend(message.ChannelID, "Command not known")
+		action, _ = function.Functions["help"]
+		returnString, _ := action(message)
+		session.ChannelMessageSend(message.ChannelID, "Command not known\n\n"+returnString)
 	}
 
-	result, err := function(message)
+	result, err := action(message)
 	if err != nil {
-		session.ChannelMessageSend(message.ChannelID, "there was a problem")
+		action, _ = function.Functions["help"]
+		returnString, _ := action(message)
+		session.ChannelMessageSend(message.ChannelID, returnString)
 	}
 
 	session.ChannelMessageSend(message.ChannelID, result)
