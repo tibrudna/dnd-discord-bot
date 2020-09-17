@@ -9,4 +9,5 @@ import (
 var Functions = map[string]func(message *discordgo.MessageCreate) (string, error){
 	"spell": Spell,
 	"roll":  Roll,
+	"help":  Help,
 }
